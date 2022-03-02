@@ -32,8 +32,8 @@ public class ServiceCenterController{
     
 
     @PostMapping("/admin/addServiceCenter")
-    public ResponseEntity<?> addServiceCenter(@RequestPart("serviceCenterModel") ServiceCenterModel serviceCenterModel,
-                                              @RequestPart("file") MultipartFile file)
+    public ResponseEntity<?> addServiceCenter(ServiceCenterModel serviceCenterModel,
+                                              @RequestParam("file") MultipartFile file)
     {
 
 
@@ -67,11 +67,27 @@ public class ServiceCenterController{
     	return ResponseEntity.ok(serviceCenterService.deleteServiceCenter(serviceCenterID));
     }
     
-    @PutMapping("/admin/editServiceCenter/{serviceCenterID}")
-    public ResponseEntity<?> editServiceCenter(@RequestBody ServiceCenterModel serviceCenterModel , @PathVariable String serviceCenterID){
-    	return ResponseEntity.ok(serviceCenterService.editServiceCenter(serviceCenterID, serviceCenterModel));
+    @PutMapping("/admin/editServiceCenter")
+    public ResponseEntity<?> updateServiceCenter(ServiceCenterModel serviceCenterModel ,
+                                               @RequestParam("file") MultipartFile file){
+        try {
+
+            if(file.isEmpty()){
+                return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Request must contain file");
+            }
+            boolean f = fileUploadHelper.uploadFile(file);
+            System.out.println(f);
+            if(f){
+                // return ResponseEntity.ok("uploaded success");
+            }
+
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+
+        return ResponseEntity.ok(serviceCenterService.updateServiceCenter( serviceCenterModel,file));
     }
-    
+
    
     
 }
